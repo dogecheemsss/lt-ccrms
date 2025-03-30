@@ -1,7 +1,5 @@
-<?php
-require_once 'configs/auth.php';
-checkAuth();
-?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -161,8 +159,8 @@ checkAuth();
             font-size: 14px;
             color: #db8505;
         }
-        
-        /* Modal Styles */
+
+        /* ===== Modal Styles ===== */
         .modal {
             display: none;
             position: fixed;
@@ -172,111 +170,117 @@ checkAuth();
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-        }
+}
 
-        .popup-content {
-            background-color: #fefefe;
-            margin: 15% auto;
+/* Modal Content */
+.popup-content {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    background: white;
+            margin: 12% auto;
             padding: 20px;
-            border: 2px solid #db8505;
             border-radius: 12px;
-            width: 80%;
+            width: 60%;
             max-width: 500px;
             position: relative;
-            animation: modalSlideIn 0.3s ease-out;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                transform: translateY(-100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .close-button {
-            position: absolute;
-            right: 20px;
-            top: 10px;
-            font-size: 28px;
-            font-weight: bold;
-            color: #db8505;
-            cursor: pointer;
-        }
-
-        .close-button:hover {
-            color: #f99858;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #db8505;
-            font-weight: bold;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #db8505;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #f99858;
-            box-shadow: 0 0 5px rgba(219, 133, 5, 0.3);
-        }
-
-        .popup-content button {
-            background-color: #db8505;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 100%;
-            transition: background-color 0.3s;
-        }
-
-        .popup-content button:hover {
-            background-color: #f99858;
-        }
-
-        .popup-content h2 {
-            color: #db8505;
-            margin-bottom: 20px;
             text-align: center;
-        }
+            animation: fadeIn 0.3s ease-in-out;
+}
 
-        .alert {
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 4px;
-            text-align: center;
-            font-weight: bold;
-        }
+/* Close Button */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #db8505;
+}
 
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
 
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
+th, td {
+    border: 1px solid #db8505;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background: #ffcc80;
+    font-weight: bold;
+}
+
+td {
+    background: #fff8f0;
+}
+
+/* Edit Button */
+.edit-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #db8505;
+}
+
+.edit-button:hover {
+    color: #a86402;
+}
+
+/* Form Styling */
+.form-group {
+    margin: 15px 0;
+    text-align: left;
+}
+
+.form-group label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    color: #db8505;
+}
+
+input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #db8505;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+/* Submit Button */
+button[type="submit"] {
+    background: #db8505;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+}
+
+button[type="submit"]:hover {
+    background: #a86402;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+        
     </style>
 </head>
 <body>
@@ -284,11 +288,11 @@ checkAuth();
         <div class="sidebar">
             <h1>LUPON</h1>
             <ul class="menu">
-                <li><a href="index.php"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="cases.php"><i class="fas fa-balance-scale"></i> Cases</a></li>
-                <li><a href="reports.php"><i class="fas fa-chart-line"></i> Reports</a></li>
-                <li><a href="archive.php"><i class="fas fa-archive"></i> Archive</a></li>
-                <li><a href="settings.php" class="active"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="cases.html"><i class="fas fa-balance-scale"></i> Cases</a></li>
+                <li><a href="reports.html"><i class="fas fa-chart-line"></i> Reports</a></li>
+                <li><a href="archive.html"><i class="fas fa-archive"></i> Archive</a></li>
+                <li><a href="settings.html" class="active"><i class="fas fa-cog"></i> Settings</a></li>
             </ul>
         </div>
     </div>
@@ -299,128 +303,156 @@ checkAuth();
             <div class="header-right">
                 <button onclick="redirectToAuthorization(event)"class="lupon-btn">LOG OUT <i class="fas fa-sign-out-alt"></i></button>
             </div>
+
+            
         </div>
-
-        <?php if (isset($_SESSION['success'])): ?>
-            <div class="alert alert-success">
-                <?php 
-                echo $_SESSION['success'];
-                unset($_SESSION['success']);
-                ?>
-            </div>
-        <?php endif; ?>
-
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-error">
-                <?php 
-                echo $_SESSION['error'];
-                unset($_SESSION['error']);
-                ?>
-            </div>
-        <?php endif; ?>
 
         <div class="settings-container">
             <div class="settings-section">
                 <h2>Data</h2>
                 <div class="settings-option">
-                <div class="settings-card" onclick="backupDatabase()">
-                    <i class="fas fa-download"></i>
-                    <div>
-                        <div class="text">Backup Data</div>
-                        <p>Click to download the backup</p>
+                    <div class="settings-card">
+                        <i class="fas fa-download"></i>
+                        <div>
+                            <div class="text">Backup Data</div>
+                            <p>Saves a backup file</p>
+                        </div>
+                    </div>
+                    <div class="settings-card">
+                        <i class="fas fa-sync-alt"></i>
+                        <div>
+                            <div class="text">Restore Data</div>
+                            <p>Restores previously saved</p>
+                        </div>
                     </div>
                 </div>
-
-
-                        <form action="configs/backup_restore.php" method="post" enctype="multipart/form-data">
-                            <label class="settings-card">
-                                <i class="fas fa-sync-alt"></i>
-                                <div>
-                                    <div class="text">Restore Data</div>
-                                    <p>Upload and restore a backup</p>
-                                </div>
-                                <input type="file" name="backup_file" accept=".sql" style="display: none;" onchange="this.form.submit()">
-                            </label>
-                        </form>
-
-                  </div>
-             </div>
+            </div>
             <div class="settings-section">
                 <h2>Account</h2>
                 <div class="settings-option">
-                    <div class="settings-card" onclick="openManageAccountModal()">
-                        <i class="fas fa-users"></i>
-                        <div>
-                            <div class="text">Manage Account</div>
-                            <p>Change Password</p>
-                        </div>
+                <div class="settings-card" onclick="openManageAccountModal()">
+                    <i class="fas fa-users"></i>
+                    <div>
+                        <div class="text">Manage Account</div>
+                        <p>Lupon / Official</p>
                     </div>
+                </div>
+
                 </div>
             </div>
         </div>
     </div>
 
+
+
     <!-- Manage Account Modal -->
-    <div id="manageAccountModal" class="modal">
-        <div class="popup-content">
-            <span class="close-button" onclick="closeManageAccountModal()">&times;</span>
-            <h2>Change Password</h2>
-            <form id="manageAccountForm" action="configs/update_password.php" method="POST">
-                <div class="form-group">
-                    <label>Current Password:</label>
-                    <input type="password" name="current_password" required>
-                </div>
-                <div class="form-group">
-                    <label>New Password:</label>
-                    <input type="password" name="new_password" required>
-                </div>
-                <div class="form-group">
-                    <label>Confirm New Password:</label>
-                    <input type="password" name="confirm_password" required>
-                </div>
-                <button type="submit">Update Password</button>
-            </form>
-        </div>
+<div id="manageAccountModal" class="modal" style="display: none;">
+    <div class="popup-content">
+        <span class="close-button" onclick="closeManageAccountModal()">&times;</span>
+        <h2>MANAGE ACCOUNT</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ACTION</th>
+                    <th>ROLE</th>
+                    <th>ACCESS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <button class="edit-button" onclick="openPasswordModal('Lupon')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                    <td><strong>LUPON</strong></td>
+                    <td><span class="access-role">Viewer</span></td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="edit-button" onclick="openPasswordModal('Official')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                    <td><strong>OFFICIAL</strong></td>
+                    <td><span class="access-role">Editor</span></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+</div>
+
+<!-- Change Password Modal -->
+<div id="passwordModal" class="modal" style="display: none;">
+    <div class="popup-content">
+        <span class="close-button" onclick="closePasswordModal()">&times;</span>
+        <h2>Change Password</h2>
+        <form id="changePasswordForm">
+            <input type="hidden" id="accountType" name="accountType">
+            <div class="form-group">
+                <label>Current Password:</label>
+                <input type="password" id="current_password" name="current_password" required>
+            </div>
+            <div class="form-group">
+                <label>New Password:</label>
+                <input type="password" id="new_password" name="new_password" required>
+            </div>
+            <div class="form-group">
+                <label>Confirm New Password:</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+            <button type="submit">Update Password</button>
+        </form>
+    </div>
+</div>
 
     <script>
-        function backupDatabase() {
-            window.location.href = "configs/backup_restore.php?backup=true";
-        }
-
         function redirectToAuthorization(event) {
             event.preventDefault(); 
-            window.location.href = "configs/logout.php"; 
+            window.location.href = "authorization.html"; 
         }
 
-        // Manage Account Modal Functions
-        function openManageAccountModal() {
-            document.getElementById('manageAccountModal').style.display = 'block';
-        }
 
-        function closeManageAccountModal() {
-            document.getElementById('manageAccountModal').style.display = 'none';
-            document.getElementById('manageAccountForm').reset();
-        }
+    // Open & Close Manage Account Modal
+    function openManageAccountModal() {
+        document.getElementById("manageAccountModal").style.display = "block";
+    }
+    function closeManageAccountModal() {
+        document.getElementById("manageAccountModal").style.display = "none";
+    }
 
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const modal = document.getElementById('manageAccountModal');
-            if (event.target == modal) {
-                closeManageAccountModal();
-            }
-        }
+    // Open & Close Password Change Modal
+// Open & Close Manage Account Modal
+function openManageAccountModal() {
+    document.getElementById("manageAccountModal").style.display = "block";
+}
+function closeManageAccountModal() {
+    document.getElementById("manageAccountModal").style.display = "none";
+}
 
-        // Form validation
-        document.getElementById('manageAccountForm').addEventListener('submit', function(event) {
-            const newPassword = document.querySelector('input[name="new_password"]').value;
-            const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
-            
-            if (newPassword !== confirmPassword) {
-                event.preventDefault();
-                alert('New passwords do not match!');
-            }
-        });
+// Open Password Change Modal
+function openPasswordModal(role) {
+    document.getElementById("accountType").value = role;
+    document.getElementById("passwordModal").style.display = "block";
+    
+    // Clear previous inputs
+    document.getElementById("current_password").value = "";
+    document.getElementById("new_password").value = "";
+    document.getElementById("confirm_password").value = "";
+}
+
+// Close Password Change Modal and Clear Inputs
+function closePasswordModal() {
+    document.getElementById("passwordModal").style.display = "none";
+
+    // Clear inputs when closing the modal
+    document.getElementById("current_password").value = "";
+    document.getElementById("new_password").value = "";
+    document.getElementById("confirm_password").value = "";
+}
+
+
+
     </script>
 </body>
 </html>
