@@ -23,65 +23,167 @@ checkAuth();
             background-color: rgb(249, 244, 239);
         }
         .sidebar {
-            width: 250px;
-            background-color:rgb(255, 255, 255);
-            box-shadow: 3px 3px 10px #f5dbcb;
-            min-height: 95vh;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            border-radius: 20px;
-            font-size: 20px;
-        }
-        .sidebar h1 {
-            text-align: center;
-            margin: 20px;
-            font-size: 30px;
-            font-weight: 900;
-            background: linear-gradient(90deg, #fec961, #ff9800); 
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 50px;
-        }
+    width: 250px;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 3px 3px 10px #f5dbcb;
+    min-height: 95vh;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    font-size: 25px;
+    transition: width 0.2s ease; 
+}
+.menu {
+    list-style: none;
+}
+.menu li a {
+    text-decoration: none;
+    color: rgb(205, 94, 3);
+    display: flex;
+    width: 100%;
+    padding: 20px;
+}
+/* Only apply hover when sidebar is NOT collapsed */
+.sidebar:not(.collapsed) .menu li:hover a,
+.sidebar:not(.collapsed) .menu li a.active {
+    background: #ffffff;
+    border-radius: 4px;
+    border-left: 4px solid rgb(106, 70, 3);
+    box-shadow: inset 4px 4px 6px rgba(0, 0, 0, 0.3), 
+                inset -8px -8px 10px rgba(255, 255, 255, 0.7);
+    transform: scale(1.02); 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-        .logo {
-            width: 50px; 
-            height: auto;
-        }
-        .menu {
-            list-style: none;
-        }
-        .menu li a {
-            text-decoration: none;
-            color: rgb(205, 94, 3);
-            display: flex;
-            width: 100%;
-            padding: 20px;
-        }
-       
-        .menu li:hover a, .menu li a.active  {
-            background: #ffffff;
-            border-radius:4px;
-            border-left: 4px solid rgb(106, 70, 3);
-            box-shadow: inset 4px 4px 6px rgba(0, 0, 0, 0.3), 
-                        inset -8px -8px 10px rgba(255, 255, 255, 0.7);
-            transform: scale(1.02); 
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+.menu li {
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+}
+.menu li i {
+    margin-right: 15px;
+}
 
-        .menu li {
-            padding: 10px;
-            cursor: pointer;
-            display: flex;
-            
-        }
+/*added*/
+.hamburger {
+    cursor: pointer;
+    padding: 20px;
+    text-align: right;
+}
 
-        .menu i {
-            justify-content: center;
-        }
-        .menu li i {
-            margin-right: 15px;
-        }
+.hamburger img {
+    width: 30px;
+    height: auto;
+    margin: 0px auto;
+}
+
+
+.sidebar.collapsed {
+    width: 80px;
+    transition: width 0.3s ease;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 30px;
+    margin-bottom: 30px;
+  }
+  
+  
+  .sidebar-header img {
+    width: 30px;
+    height: auto;
+    cursor: pointer;
+  }
+  
+.sidebar.collapsed .sidebar-header h1 {
+    display: none;
+  }
+  
+  .sidebar.collapsed .sidebar-header img {
+    content: url('../img/logo.png');
+    width: 50px;
+  }
+  
+
+.sidebar.collapsed .menu li a span {
+    display: none;
+}
+
+.sidebar.collapsed {
+    width: 100px;
+    transition: width 0.3s ease;
+    align-items: center; /* Center children horizontally */
+}
+
+.sidebar.collapsed .menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;     /* Center vertically */
+    height: 100%;                /* Take full height */
+    width: 100%;
+}
+
+.sidebar.collapsed .menu li a.active {
+    background-color: #ffffff; 
+    box-shadow: inset 4px 4px 6px rgba(0, 0, 0, 0.3), 
+                inset -8px -8px 10px rgba(255, 255, 255, 0.7);        /* Blue background */
+    border-radius: 8px;               /* Optional: make text white */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-right: 5px solid rgb(106, 70, 3);
+}
+
+.sidebar:not(.collapsed) .menu li a:hover {
+    background: #ffffff;
+    border-radius: 4px;
+    border-left: 4px solid rgb(106, 70, 3);
+    box-shadow: inset 4px 4px 6px rgba(0, 0, 0, 0.3), 
+                inset -8px -8px 10px rgba(255, 255, 255, 0.7);
+    transform: scale(1.02); 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sidebar.collapsed .menu li a:hover {
+    background-color: rgba(255, 224, 185, 0.4);
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(255, 170, 70, 0.5);
+    color: rgb(205, 94, 3);
+    border-right: 5px solid rgb(106, 70, 3);
+}
+
+.brand {
+    text-align: center;
+    margin: 20px 0 50px 0;
+    position: relative;
+}
+
+.brand-text {
+    font-size: 30px;
+    font-weight: 900;
+    color: #CF8600;
+}
+
+.brand-logo {
+    width: 50px;
+    height: auto;
+    display: none;
+    margin: 0px auto;
+}
+
+/* When sidebar is collapsed */
+.sidebar.collapsed .brand-text {
+    display: none;
+}
+
+.sidebar.collapsed .brand-logo {
+    display: block;
+}
 
         .main-content {
             flex: 1;
@@ -269,17 +371,24 @@ checkAuth();
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
-            <h1>LUPON</h1>
+        <div class="sidebar collapsed" id="sidebar">
+          <div class="sidebar-header">
+            <h1 class="brand-text" id="brandText">LUPON</h1>
+            <img src='img/menu.png' alt="Menu Icon" id="menuIcon" onclick="toggleSidebar()" />
+          </div>
+      
+            
+    
             <ul class="menu">
-                <li><a href="index.php" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="cases.php"><i class="fas fa-balance-scale"></i> Cases</a></li>
-                <li><a href="reports.php"><i class="fas fa-chart-line"></i> Reports</a></li>
-                <li><a href="archive.php"><i class="fas fa-archive"></i> Archive</a></li>
-                <li><a href="settings.php"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="index.html" class="active"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+                <li><a href="cases.html"><i class="fas fa-balance-scale"></i> <span>Cases</span></a></li>
+                <li><a href="reports.html"><i class="fas fa-chart-line"></i> <span>Reports</span></a></li>
+                <li><a href="archive.html"><i class="fas fa-archive"></i> <span>Archive</span></a></li>
+                <li><a href="settings.html"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
             </ul>
         </div>
     </div>
+
 
     <div class="main-content">
         <div class="dashboard-header">
@@ -468,6 +577,11 @@ function redirectToAuthorization(event) {
     event.preventDefault();
     window.location.href = "configs/logout.php";
 }
+
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.toggle("collapsed");
+  }
     </script>
 </body>
 </html>
