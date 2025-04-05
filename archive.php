@@ -184,6 +184,7 @@ checkAuth();
 .sidebar.collapsed .brand-logo {
     display: block;
 }
+
         .main-content {
             flex: 1;
             padding: 20px;
@@ -393,14 +394,13 @@ td i:hover {
                 <li><a href="index.html"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
                 <li><a href="cases.html"><i class="fas fa-balance-scale"></i> <span>Cases</span></a></li>
                 <li><a href="reports.html"><i class="fas fa-chart-line"></i> <span>Reports</span></a></li>
-                <li><a href="archive.html"class="active"><i class="fas fa-archive"></i> <span>Archive</span></a></li>
+                <li><a href="archive.html" class="active"><i class="fas fa-archive"></i> <span>Archive</span></a></li>
                 <li><a href="settings.html" ><i class="fas fa-cog"></i> <span>Settings</span></a></li>
             </ul>
         </div>
     </div>
 
 
-    
     <div class="main-content">
         <div class="dashboard-header">
             <span>Archive</span>
@@ -627,6 +627,7 @@ function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
     sidebar.classList.toggle("collapsed");
   }
+
 </script>
 
 </html>

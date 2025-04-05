@@ -23,7 +23,6 @@ checkAuth();
             background-color: rgb(249, 244, 239);
         }
         .sidebar {
-            border-radius: 20px;
     width: 250px;
     background-color: rgb(255, 255, 255);
     box-shadow: 3px 3px 10px #f5dbcb;
