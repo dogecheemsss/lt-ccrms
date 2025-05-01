@@ -1,15 +1,17 @@
 <?php
 include 'config.php';
 
-// Get filter parameters
-$year = isset($_GET['year']) ? $_GET['year'] : '';
-$month = isset($_GET['month']) ? $_GET['month'] : '';
+$startYear = isset($_GET['startYear']) ? (int)$_GET['startYear'] : 0;
+$startMonth = isset($_GET['startMonth']) ? (int)$_GET['startMonth'] : 0;
+$endYear = isset($_GET['endYear']) ? (int)$_GET['endYear'] : 0;
+$endMonth = isset($_GET['endMonth']) ? (int)$_GET['endMonth'] : 0;
+$nature = isset($_GET['nature']) ? $_GET['nature'] : '';
 
 // Set headers for Excel download
 header('Content-Type: application/vnd.ms-excel');
 header('Content-Disposition: attachment; filename="detailed_cases_report.xls"');
 
-// Build the SQL query with filters
+// SQL Query
 $sql = "SELECT 
     c.case_no,
     GROUP_CONCAT(DISTINCT CONCAT(p1.first_name, ' ', COALESCE(p1.middle_name, ''), ' ', p1.last_name, ' ', COALESCE(p1.suffix, '')) SEPARATOR ' & ') AS complainants,
@@ -19,8 +21,8 @@ $sql = "SELECT
     DATE_FORMAT(c.file_date, '%Y-%m-%d') as file_date,
     DATE_FORMAT(c.confrontation_date, '%Y-%m-%d') as confrontation_date,
     c.action_taken,
-    c.settlement_date as settlement_date,
-    c.exec_settlement_date as exec_settlement_date,
+    DATE_FORMAT(c.settlement_date, '%Y-%m-%d') as settlement_date,
+    DATE_FORMAT(c.exec_settlement_date, '%Y-%m-%d') as exec_settlement_date,
     c.main_agreement,
     c.compliance_status,
     c.remarks
@@ -31,23 +33,24 @@ LEFT JOIN case_persons cp2 ON c.case_no = cp2.case_no AND cp2.role = 'Respondent
 LEFT JOIN persons p2 ON cp2.person_id = p2.person_id
 WHERE c.is_archived = 0";
 
-if ($year) {
-    $sql .= " AND YEAR(c.file_date) = " . intval($year);
-}
-if ($month) {
-    $sql .= " AND MONTH(c.file_date) = " . intval($month);
+// Apply date range filter
+if ($startYear && $startMonth && $endYear && $endMonth) {
+    $startDate = "$startYear-" . str_pad($startMonth, 2, '0', STR_PAD_LEFT) . "-01";
+    $endDate = date("Y-m-t", strtotime("$endYear-" . str_pad($endMonth, 2, '0', STR_PAD_LEFT) . "-01"));
+    $sql .= " AND c.file_date BETWEEN '$startDate' AND '$endDate'";
 }
 
-$sql .= " GROUP BY c.case_no, c.title, c.nature, c.file_date, c.confrontation_date, 
-         c.action_taken, c.settlement_date, c.exec_settlement_date, 
-         c.main_agreement, c.compliance_status, c.remarks
-         ORDER BY c.file_date DESC";
+// Apply nature filter
+if (!empty($nature)) {
+    $sql .= " AND c.nature = '" . $conn->real_escape_string($nature) . "'";
+}
 
+$sql .= " GROUP BY c.case_no, c.title, c.nature, c.file_date ORDER BY c.file_date ASC";
+
+// Execute and generate table
 $result = $conn->query($sql);
 
-// Create Excel content
 echo "<table border='1'>";
-// Add headers
 echo "<tr style='background-color: #db8505; color: white; font-weight: bold;'>
         <td>Case No</td>
         <td>Complainant(s)</td>
@@ -64,7 +67,6 @@ echo "<tr style='background-color: #db8505; color: white; font-weight: bold;'>
         <td>Remarks</td>
       </tr>";
 
-// Add data rows
 while ($row = $result->fetch_assoc()) {
     echo "<tr>";
     echo "<td>" . htmlspecialchars($row['case_no']) . "</td>";
@@ -84,5 +86,6 @@ while ($row = $result->fetch_assoc()) {
 }
 
 echo "</table>";
+
 $conn->close();
-?> 
+?>

@@ -1,100 +1,135 @@
 <?php
 include 'config.php';
 
-// Get the selected year from the request
-$year = isset($_GET['year']) ? (int)$_GET['year'] : date("Y");
+// Get the current date
+$currentDate = new DateTime();
 
-// Get total cases (excluding archived cases)
-$totalCasesQuery = "SELECT COUNT(*) AS total FROM cases WHERE is_archived = 0";
-$totalCasesResult = $conn->query($totalCasesQuery);
-$totalCases = $totalCasesResult->fetch_assoc()['total'];
+// Default: Set the last 12 months
+$endYear = $currentDate->format('Y');
+$endMonth = $currentDate->format('m');
 
-// Get total criminal cases (excluding archived cases)
-$criminalCasesQuery = "SELECT COUNT(*) AS total FROM cases WHERE nature = 'Criminal' AND is_archived = 0";
-$criminalCasesResult = $conn->query($criminalCasesQuery);
-$criminalCases = $criminalCasesResult->fetch_assoc()['total'];
+// Calculate the start date (12 months ago)
+$startDate = clone $currentDate;
+$startDate->modify('-12 months');
+$startYear = $startDate->format('Y');
+$startMonth = $startDate->format('m');
 
-// Get total civil cases (excluding archived cases)
-$civilCasesQuery = "SELECT COUNT(*) AS total FROM cases WHERE nature = 'Civil' AND is_archived = 0";
-$civilCasesResult = $conn->query($civilCasesQuery);
-$civilCases = $civilCasesResult->fetch_assoc()['total'];
+// Override with query parameters if provided
+$startYear = isset($_GET['startYear']) ? (int)$_GET['startYear'] : $startYear;
+$startMonth = isset($_GET['startMonth']) ? (int)$_GET['startMonth'] : $startMonth;
+$endYear = isset($_GET['endYear']) ? (int)$_GET['endYear'] : $endYear;
+$endMonth = isset($_GET['endMonth']) ? (int)$_GET['endMonth'] : $endMonth;
 
-// Get highest month by case count (excluding archived cases)
-$highestMonthQuery = "
-    SELECT MONTHNAME(file_date) AS month, COUNT(*) AS total_cases
-    FROM cases
-    WHERE YEAR(file_date) = ? AND is_archived = 0
-    GROUP BY MONTH(file_date)
-    ORDER BY total_cases DESC
-    LIMIT 1
-";
+// Build dynamic WHERE clause for filtering
+$whereClause = "is_archived = 0";
+$params = [];
+$types = "";
 
-$stmt = $conn->prepare($highestMonthQuery);
-$stmt->bind_param("i", $year);
-$stmt->execute();
-$highestMonthResult = $stmt->get_result();
-$highestMonth = ($highestMonthResult->num_rows > 0) ? $highestMonthResult->fetch_assoc()['month'] : "None";
-$stmt->close();
+// Filter by year and month range (startYear/startMonth to endYear/endMonth)
+if ($startYear && $startMonth && $endYear && $endMonth) {
+    $whereClause .= " AND ((YEAR(file_date) > ? OR (YEAR(file_date) = ? AND MONTH(file_date) >= ?)) ";
+    $whereClause .= "AND (YEAR(file_date) < ? OR (YEAR(file_date) = ? AND MONTH(file_date) <= ?)))";
+    $params[] = $startYear;
+    $params[] = $startYear;
+    $params[] = $startMonth;
+    $params[] = $endYear;
+    $params[] = $endYear;
+    $params[] = $endMonth;
+    $types .= "iiiiii";  // Add six integers for year/month range
+}
 
-// Get monthly case counts (excluding archived cases)
+// Helper function to prepare and execute dynamic queries
+function fetchSingleValue($conn, $query, $types, $params) {
+    $stmt = $conn->prepare($query);
+    if ($types && $params) {
+        $stmt->bind_param($types, ...$params);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $value = $result->fetch_assoc();
+    $stmt->close();
+    return $value;
+}
+
+// Total cases
+$totalCasesData = fetchSingleValue($conn, "SELECT COUNT(*) AS total FROM cases WHERE $whereClause", $types, $params);
+$totalCases = $totalCasesData['total'] ?? 0;
+
+// Criminal cases
+$criminalCasesData = fetchSingleValue($conn, "SELECT COUNT(*) AS total FROM cases WHERE nature = 'Criminal' AND $whereClause", $types, $params);
+$criminalCases = $criminalCasesData['total'] ?? 0;
+
+// Civil cases
+$civilCasesData = fetchSingleValue($conn, "SELECT COUNT(*) AS total FROM cases WHERE nature = 'Civil' AND $whereClause", $types, $params);
+$civilCases = $civilCasesData['total'] ?? 0;
+
+// Monthly case counts (filtered by year/month range)
 $monthlyCasesQuery = "
-    SELECT MONTH(file_date) AS month, COUNT(*) AS total
+    SELECT 
+        DATE_FORMAT(file_date, '%Y-%m') AS month,
+        SUM(CASE WHEN nature = 'Civil' THEN 1 ELSE 0 END) AS civil,
+        SUM(CASE WHEN nature = 'Criminal' THEN 1 ELSE 0 END) AS criminal
     FROM cases
-    WHERE YEAR(file_date) = ? AND is_archived = 0
-    GROUP BY MONTH(file_date)
+    WHERE $whereClause
+    GROUP BY month
     ORDER BY month
 ";
 
 $stmt = $conn->prepare($monthlyCasesQuery);
-$stmt->bind_param("i", $year);
+$stmt->bind_param($types, ...$params);  // Bind the dynamic parameters
 $stmt->execute();
 $monthlyCasesResult = $stmt->get_result();
 
-$monthlyCases = array_fill(0, 12, 0); // Default 0 cases for each month (Jan to Dec)
+$monthlyCases = [];
 while ($row = $monthlyCasesResult->fetch_assoc()) {
-    $monthlyCases[$row['month'] - 1] = $row['total']; // Adjust index (Jan=0, Feb=1, etc.)
+    $monthKey = $row['month']; // e.g., "2024-03"
+    $monthlyCases[$monthKey] = [
+        'civil' => (int) $row['civil'],
+        'criminal' => (int) $row['criminal']
+    ];
 }
 $stmt->close();
 
-// Get yearly case statistics (excluding archived cases)
+// Yearly breakdown for chart (all data, not filtered by year/month)
 $yearlyCasesQuery = "
-    SELECT YEAR(file_date) AS year, COUNT(*) AS total_cases
+    SELECT YEAR(file_date) AS year,
+           SUM(CASE WHEN nature = 'Criminal' THEN 1 ELSE 0 END) AS criminal_cases,
+           SUM(CASE WHEN nature = 'Civil' THEN 1 ELSE 0 END) AS civil_cases
     FROM cases
-    WHERE is_archived = 0
     GROUP BY YEAR(file_date)
     ORDER BY year ASC
 ";
-
 $yearlyCasesResult = $conn->query($yearlyCasesQuery);
 $yearlyCases = [];
-
 while ($row = $yearlyCasesResult->fetch_assoc()) {
-    $yearlyCases[$row['year']] = $row['total_cases']; // Store year as key, case count as value
+    $yearlyCases[$row['year']] = [
+        'criminal' => (int) $row['criminal_cases'],
+        'civil' => (int) $row['civil_cases']
+    ];
 }
 
-// Get case status breakdown (excluding archived cases)
-$statusQuery = "
-    SELECT compliance_status, COUNT(*) AS total
-    FROM cases
-    WHERE is_archived = 0
-    GROUP BY compliance_status
-";
-$statusResult = $conn->query($statusQuery);
-$statusData = ["Complete" => 0, "Ongoing" => 0];
+// Status breakdown (Complete/Ongoing)
+$statusStmt = $conn->prepare("SELECT compliance_status, COUNT(*) AS total FROM cases WHERE $whereClause GROUP BY compliance_status");
+if ($types && $params) {
+    $statusStmt->bind_param($types, ...$params);
+}
+$statusStmt->execute();
+$statusResult = $statusStmt->get_result();
 
+$statusData = ["Complete" => 0, "Ongoing" => 0];
 while ($row = $statusResult->fetch_assoc()) {
     $statusData[$row['compliance_status']] = $row['total'];
 }
+$statusStmt->close();
 
-// Return data as JSON
+// Return as JSON
 echo json_encode([
-    "total_cases" => $totalCases,
-    "criminal_cases" => $criminalCases,
-    "civil_cases" => $civilCases,
-    "highest_month" => $highestMonth,
-    "monthly_cases" => $monthlyCases,
-    "yearly_cases" => $yearlyCases,
-    "status_data" => $statusData
+    'total_cases' => $totalCases,
+    'criminal_cases' => $criminalCases,
+    'civil_cases' => $civilCases,
+    'status_data' => $statusData,
+    'yearly_cases' => $yearlyCases,
+    'monthly_cases' => $monthlyCases
 ]);
 
 $conn->close();

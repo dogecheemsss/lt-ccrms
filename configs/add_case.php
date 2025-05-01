@@ -1,5 +1,8 @@
 <?php
 include 'config.php';
+require_once 'logger.php';
+
+session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $title = $_POST['title'];
@@ -12,6 +15,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $main_agreement = !empty($_POST['main_agreement']) ? $_POST['main_agreement'] : NULL;
     $compliance_status = !empty($_POST['compliance_status']) ? $_POST['compliance_status'] : "Ongoing";
     $remarks = !empty($_POST['remarks']) ? $_POST['remarks'] : NULL;
+
+    // Get logger instance
+    $logger = getLogger();
+    $username = $_SESSION['username'] ?? 'Unknown'; 
+
+    // Handle the file upload
+    $attached_file = NULL;  // Default to no file
+
+    if (isset($_FILES['attached_file']) && $_FILES['attached_file']['error'] == 0) {
+        $file_name = $_FILES['attached_file']['name'];
+        $file_tmp_name = $_FILES['attached_file']['tmp_name'];
+        $file_size = $_FILES['attached_file']['size'];
+        $file_ext = pathinfo($file_name, PATHINFO_EXTENSION);
+
+        // Set allowed file types (for example, PDF, DOCX, JPG, PNG)
+        $allowed_extensions = ['pdf', 'docx', 'jpg', 'jpeg', 'png'];
+
+        // Check if the file extension is allowed
+        if (!in_array(strtolower($file_ext), $allowed_extensions)) {
+            echo "Error: Invalid file type. Only PDF, DOCX, JPG, and PNG files are allowed.";
+            exit();
+        }
+
+        // Check file size (for example, 5MB limit)
+        if ($file_size > 5 * 1024 * 1024) {
+            echo "Error: File size exceeds the 5MB limit.";
+            exit();
+        }
+
+        // Define a directory to save the file
+        $upload_dir = '../uploads/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0777, true);  // Create directory if it doesn't exist
+        }
+
+        // Generate a unique filename
+        $file_new_name = uniqid('file_') . '.' . $file_ext;
+        $file_path = $upload_dir . $file_new_name;
+
+        // Move the file to the upload directory
+        if (move_uploaded_file($file_tmp_name, $file_path)) {
+            $attached_file = $file_new_name;  // Save the file name to the database
+        } else {
+            echo "Error: Failed to upload file.";
+            exit();
+        }
+    }
 
     try {
         // Start transaction
@@ -44,9 +94,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             throw new Exception("Generated case number is invalid");
         }
 
-        // Insert Case
-        $stmt = $conn->prepare("INSERT INTO cases (case_no, title, nature, file_date, confrontation_date, action_taken, settlement_date, exec_settlement_date, main_agreement, compliance_status, remarks, is_archived) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)");
-        $stmt->bind_param("sssssssssss", $case_no, $title, $nature, $file_date, $confrontation_date, $action_taken, $settlement_date, $exec_settlement_date, $main_agreement, $compliance_status, $remarks);
+        $stmt = $conn->prepare("INSERT INTO cases (case_no, title, nature, file_date, confrontation_date, action_taken, settlement_date, exec_settlement_date, main_agreement, compliance_status, remarks, attached_file) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssssssss", $case_no, $title, $nature, $file_date, $confrontation_date, $action_taken, $settlement_date, $exec_settlement_date, $main_agreement, $compliance_status, $remarks, $attached_file);
         
         if (!$stmt->execute()) {
             throw new Exception("Error inserting case: " . $stmt->error);
@@ -113,11 +162,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Commit the transaction
         $conn->commit();
+        
+        // Log the successful case addition
+        $logger->logCase('add', $case_no, $username);
+        
         echo "success";
         
     } catch (Exception $e) {
         // Roll back the transaction if something failed
         $conn->rollback();
+        
+        // Log the error
+        $logger->logError('add_case_failed', $e->getMessage());
+        
         echo "Error: " . $e->getMessage();
     }
 }
