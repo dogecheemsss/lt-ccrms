@@ -12,6 +12,7 @@ checkAuth();
     <style>
      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
 
+<<<<<<< HEAD
 * {
     margin: 0;
     padding: 0;
@@ -23,6 +24,19 @@ body {
     background-color: rgb(249, 244, 239);
 }
 .sidebar {
+=======
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+        body {
+            display: flex;
+            background-color: rgb(249, 244, 239);
+        }
+        .sidebar {
+>>>>>>> 370b32492e9c2486c6c0a7c1eea45a51fea9a47c
     width: 250px;
     background-color: rgb(255, 255, 255);
     box-shadow: 3px 3px 10px #f5dbcb;
@@ -104,7 +118,11 @@ body {
   }
   
   .sidebar.collapsed .sidebar-header img {
+<<<<<<< HEAD
     content: url('img/logo.png');
+=======
+    content: url('../img/logo.png');
+>>>>>>> 370b32492e9c2486c6c0a7c1eea45a51fea9a47c
     width: 50px;
   }
   
@@ -164,7 +182,11 @@ body {
 }
 
 .brand-text {
+<<<<<<< HEAD
     font-size: 25px;
+=======
+    font-size: 30px;
+>>>>>>> 370b32492e9c2486c6c0a7c1eea45a51fea9a47c
     font-weight: 900;
     color: #CF8600;
 }
@@ -185,6 +207,7 @@ body {
     display: block;
 }
 
+<<<<<<< HEAD
 
 .main-content {
     flex: 1;
@@ -230,6 +253,52 @@ body {
         align-items: center; 
         height: 100vh;
     }
+=======
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+        .dashboard-header {
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #f6c77f;
+            color: #f99858;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+        .lupon-btn {
+            background-color: #ffffff;
+            color: #db8505;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            border: 3px solid #db8505;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease-in-out;
+        }
+        .lupon-btn:hover {
+            background-color: #db8505;
+            color: #ffffff;
+            transform: translateY(-3px);
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            height: 100vh;
+        }
+>>>>>>> 370b32492e9c2486c6c0a7c1eea45a51fea9a47c
                
         .table-container {
     max-height: 680px; /* Adjust height as needed */
@@ -645,7 +714,29 @@ td i:hover {
     </style>
 </head>
 <body>
+<<<<<<< HEAD
     <?php include 'sidebar.php'; ?>
+=======
+    <div class="container">
+        <div class="sidebar collapsed" id="sidebar">
+          <div class="sidebar-header">
+            <h1 class="brand-text" id="brandText">LUPON</h1>
+            <img src='img/menu.png' alt="Menu Icon" id="menuIcon" onclick="toggleSidebar()" />
+          </div>
+      
+            
+    
+            <ul class="menu">
+                <li><a href="index.html"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+                <li><a href="cases.html"><i class="fas fa-balance-scale"></i> <span>Cases</span></a></li>
+                <li><a href="reports.html"><i class="fas fa-chart-line"></i> <span>Reports</span></a></li>
+                <li><a href="archive.html" class="active"><i class="fas fa-archive"></i> <span>Archive</span></a></li>
+                <li><a href="settings.html" ><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+            </ul>
+        </div>
+    </div>
+
+>>>>>>> 370b32492e9c2486c6c0a7c1eea45a51fea9a47c
 
     <div class="main-content">
         <div class="dashboard-header">
@@ -942,6 +1033,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function redirectToAuthorization(event) {
+<<<<<<< HEAD
             event.preventDefault(); 
             window.location.href = "configs/logout.php"; 
         }
@@ -1069,6 +1161,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+=======
+    event.preventDefault();
+    window.location.href = "configs/logout.php";
+}
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    sidebar.classList.toggle("collapsed");
+  }
+>>>>>>> 370b32492e9c2486c6c0a7c1eea45a51fea9a47c
 
 </script>
 
